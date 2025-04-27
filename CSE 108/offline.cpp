@@ -24,18 +24,13 @@ public:
     }
     Fraction(int a, int b)
     {
-        // int temp = gcd(a, b);
-        // a = a / temp;
-        // b = b / temp;
+        int temp = gcd(a, b);
+        a = a / temp;
+        b = b / temp;
         numerator = a;
         denominator = b;
     }
-    Fraction& operator=(const Fraction&f){
-        int temp = gcd(f.numerator, f.denominator);
-        numerator = f.numerator/temp;
-        denominator = f.denominator/temp;
-        return *this;
-    }
+   
     Fraction add(Fraction &f)
     {
         int a = numerator * f.denominator + denominator * f.numerator;
@@ -69,40 +64,41 @@ public:
         Fraction temp(x,y);
         return temp;
     }
-   
-    Fraction div(int a){
-        int x = numerator ;
-        int y = denominator*a;
-        Fraction temp(x,y);
-        return temp;
-    }
-    Fraction div(Fraction &f){
-        int x = numerator * f.denominator;
-        int y = denominator * f.numerator;
-        Fraction temp(x,y);
-        return temp;
-    }
     Fraction mul(int a){
         int x = numerator * a ;
         int y = denominator;
         Fraction temp(x,y);
         return temp;
     }
+   
+    Fraction div(Fraction &f){
+        int x = numerator * f.denominator;
+        int y = denominator * f.numerator;
+        Fraction temp(x,y);
+        return temp;
+    }
+    Fraction div(int a){
+        int x = numerator ;
+        int y = denominator*a;
+        Fraction temp(x,y);
+        return temp;
+    }
+  
 
 
-    void setX(int a)
+    void setNum(int a)
     {
         numerator = a;
     }
-    void setY(int a)
+    void setDen(int a)
     {
         denominator = a;
     }
-    int getX()
+    int getNum()
     {
         return numerator;
     }
-    int getY()
+    int getDen()
     {
         return denominator;
     }
@@ -117,6 +113,7 @@ public:
     ~Fraction()
     {
         // free allocated memories
+        //not necessary
     }
 };
 int gcd(int a, int b)
@@ -135,6 +132,7 @@ class FractionCollection{
     Fraction *fractions;
     int maxlength;
     int length;
+
     public:
     FractionCollection(){
         fractions = new Fraction[10];
@@ -146,19 +144,14 @@ class FractionCollection{
         maxlength = n;
         length = 0;
     }
-    FractionCollection(const FractionCollection &f){
-        fractions = new Fraction[f.maxlength];
-        maxlength = f.maxlength;
-        length = f.length;
-    }
- 
-
-
-    void insert(Fraction f){ // f is passed as an argument // f er destructor called hobe
+    void insert(Fraction f){ 
         fractions[length] = f;
-        length++;// sure na
+        length++;// 
     }
     void insert(int pos, Fraction f){
+        if(length == maxlength){ // all filled hoile last value will be discared
+            length--;
+        }
         for(int i = length; i > pos; i--){
             fractions[i] = fractions[i-1];
         }
@@ -167,20 +160,15 @@ class FractionCollection{
     }
     // remove;
     void remove(){
-        fractions[length].setX(0);
-        fractions[length].setY(1);
         length--;
-
     }
     void remove(Fraction f){
         for(int i = 0; i < length; i++){
-            if(f.getX() == fractions[i].getX() && f.getY() == fractions[i].getY()){
+            if(f.getNum() == fractions[i].getNum() && f.getDen() == fractions[i].getDen()){
                 
                 for(int j = i ; j < length - 1; j++){
                     fractions[j] = fractions[j+1];
                 }
-                fractions[length].setX(0);
-                fractions[length].setY(1);
                 length--;
             }
         }
@@ -189,8 +177,6 @@ class FractionCollection{
         for(int j = pos; j < length - 1; j++){
             fractions[j] = fractions[j+1];
         }
-        fractions[length].setX(0);
-        fractions[length].setY(1);
         length--;
 
     }
@@ -199,7 +185,7 @@ class FractionCollection{
         int ans = -1;
 
         for(int i = 0; i < length; i++){
-            double temp = (double)fractions[i].getX()/ fractions[i].getY();
+            double temp = (double)fractions[i].getNum()/ fractions[i].getDen();
             if(temp > value){
                 value = temp;
                 ans = i;
@@ -212,7 +198,7 @@ class FractionCollection{
         int ans = -1;
 
         for(int i = 0; i < length; i++){
-            double temp = (double)fractions[i].getX()/ fractions[i].getY();
+            double temp = (double)fractions[i].getNum()/ fractions[i].getDen();
             if(temp < value){
                 value = temp;
                 ans = i;
@@ -242,14 +228,14 @@ class FractionCollection{
     }
     void print(){
         cout << "Fraction" << endl;
-cout << "-------------------------------" << endl;
+        cout << "-------------------------------" << endl;
         for(int i = 0; i < length; i++){
-           cout <<"Fractions " << i<<" "; 
+           cout <<"Fractions " << i<<" :"; 
            fractions[i].print();
         }
 
         
-        cout <<"MAX ";
+        cout <<"MAX: ";
         getmax().print();
         cout << "MIN: ";
         getmin().print();
