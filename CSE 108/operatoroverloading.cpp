@@ -5,9 +5,7 @@ int gcd(int a, int b){
     if(b == 0) return a;
     return gcd(b, a % b);
 }
-
 class Fraction{
-
     private:
      int numerator;
      int denominator;
@@ -22,7 +20,6 @@ class Fraction{
         int temp = gcd(num,den);
         numerator =  num/ temp;
         denominator = den /temp;
-      
      }
      Fraction(int a, int b){
         if(b == 0){
@@ -35,7 +32,7 @@ class Fraction{
         numerator = a / temp;
         denominator = b/temp;
         }
-     }
+    }
      Fraction operator+(Fraction &ob){
         int num = ob.numerator * denominator + numerator * ob.denominator;
         int den = ob.denominator *denominator;
@@ -127,7 +124,6 @@ class Fraction{
         
     }
     Fraction sqrtin(){
-        
         float x = sqrt((float) numerator); 
         float y = sqrt((float) denominator);
         Fraction a(x,y);
@@ -181,7 +177,6 @@ class FractionVector{
     FractionVector(){
         size = 0;
     }
-   
     FractionVector(const FractionVector& ob){
         size = ob.size;
         vectors = new Fraction[size];
@@ -195,7 +190,7 @@ class FractionVector{
             std::cout <<"out of order\n";
         }
         else{
-            return vectors[pos]; // this returning adress may create some problem
+            return vectors[pos]; 
         }
     }
         Fraction& operator[](int pos){
@@ -203,7 +198,7 @@ class FractionVector{
             std::cout <<"out of order\n";
         }
         else{
-            return vectors[pos]; // this returning adress may create some problem
+            return vectors[pos]; 
         }
     }
     FractionVector operator+(FractionVector ob){ // eikhane adress dile
@@ -278,7 +273,7 @@ class FractionVector{
     }
     FractionVector& operator=(const FractionVector& ob){
       
-        if(ob.size >0) delete []vectors;
+        if(size >0) delete []vectors;
         size = ob.size;
         vectors = new Fraction[size];
         for(int i = 0; i < size; i++){
@@ -401,9 +396,7 @@ class FractionMatrix{
             temp[i] = rows[i] + ob[i];
         }
         // er column type fixx kora lagbe
-        for(int j = 0; j < colcount; j++){
-            temp.cols[j] = cols[j] + ob.getColumn(j);
-        }
+        temp.colfix();
         return temp;
     }
       FractionMatrix operator-(FractionMatrix &ob){
@@ -413,9 +406,7 @@ class FractionMatrix{
             temp[i] = rows[i] - ob[i];
         }
         // er column type fixx kora lagbe
-        for(int j = 0; j < colcount; j++){
-            temp.cols[j] = cols[j] - ob.getColumn(j);
-        }
+        temp.colfix();
         return temp;
     }
       FractionMatrix operator%(FractionMatrix &ob){
@@ -428,42 +419,49 @@ class FractionMatrix{
             }
             temp[i] = drim;
         }
-        // er column type fixx kora lagbe
-        // for(int j = 0; j < colcount; j++){
-        //  FractionVector drim(rowcount);
-        //     for(int i = 0; i < rowcount; i++){
-        //         drim[i] = cols[j][i] * (ob.getColumn(j))[i];
-        //     }
-        //       temp.cols[j] = drim;
-        // }
-        // colfix();
+       
         temp.colfix();
         return temp;
     }
-  
-
-
-
-
+     FractionMatrix operator*(FractionMatrix &ob){
+        //check for dimentional fault
+        FractionMatrix temp(rowcount, ob.colcount);
+        for(int i = 0; i < rowcount; i++){
+            FractionVector ans(ob.colcount);
+            for(int j = 0; j < ob.colcount; j++){
+                ans[j] = rows[i] * ob.getColumn(j);   
+            }
+            temp[i] = ans;
+        }
+        temp.colfix();
+        return temp;
+     }
+     void transpose(){
+        int temp = rowcount;
+        rowcount = colcount;
+        delete[] rows;
+        rows = new FractionVector[rowcount];
+        for(int i = 0; i < rowcount; i++){
+            rows[i] = getColumn(i);
+        }
+        colcount = temp;
+        delete []cols;
+        cols = new FractionVector[colcount];
+        colfix();
+     }
     void takeinput(){
         cout <<"Enter vectors\n";
-    for(int i = 0; i < rowcount; i++){
-        FractionVector temp(colcount);
-        cin >> temp;
-        rows[i] = temp;
+    
+    colfix();
     }
-    for(int j = 0; j < colcount; j++){
-        FractionVector temp(rowcount);
-        for(int i = 0; i < rowcount; i++){
-            temp[i] = rows[i][j];
-        }
-        cols[j] = temp;
-    }
+    ~FractionMatrix(){
+        delete []rows;
+        delete []cols;
     }
     
 
 friend ostream& operator<<(ostream& out, const FractionMatrix &m );
-
+friend istream& operator>>(istream&in, FractionMatrix &m);
 };
 
 ostream& operator<<(ostream& out, const FractionMatrix &m ){
@@ -473,33 +471,32 @@ ostream& operator<<(ostream& out, const FractionMatrix &m ){
     }
     return out;
 }
+istream& operator>>(istream&in, FractionMatrix &m){
+    cout <<"Enter vectors: ";
+     for(int i = 0; i < m.rowcount; i++){
+        FractionVector temp(m.colcount);
+        in >> temp;
+        m.rows[i] = temp;
+    }
+    m.colfix();
+    return in;
+
+}
 
 
 
 int main(){
  
-    FractionMatrix m(1,2);
-    m.takeinput();
+    FractionMatrix m(2,3);
+    cin >> m;
     cout << m;
-    FractionMatrix m2(1,2);
-    m2.takeinput();
-    cout << m2;
-    FractionMatrix m3;
-    m3 = m % m2;
-    cout << m3 ;
-    cout << m3.getColumn(1);
-
-    
-    
-
-   
-    
-    
-
-
-    
-
-
-
+    // FractionMatrix m2(2,2);
+    // cin >> m2;
+    // cout << m2;
+    // FractionMatrix m3;
+    // m3 = m *m2;
+    // cout << m3;
+   m.transpose();
+   cout << m;
 
 }
