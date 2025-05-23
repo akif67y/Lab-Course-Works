@@ -2,7 +2,17 @@
 #include<climits>
 using namespace std;
 
-int gcd(int a, int b);
+int gcd(int a, int b)
+{
+    if (b == 0)
+    {
+        return a;
+    }
+    else
+    {
+        return gcd(b, a % b);
+    }
+}
 
 class Fraction
 {
@@ -27,8 +37,13 @@ public:
         int temp = gcd(a, b);
         a = a / temp;
         b = b / temp;
+
         numerator = a;
         denominator = b;
+        if(numerator > 0 && denominator < 0){
+            denominator *= -1;
+            numerator *= -1;
+        }
     }
    
     Fraction add(Fraction &f)
@@ -74,12 +89,20 @@ public:
     Fraction div(Fraction &f){
         int x = numerator * f.denominator;
         int y = denominator * f.numerator;
+        if( y == 0){
+            cout <<"Cannot divide by 0\n";
+            return *this;
+        }
         Fraction temp(x,y);
         return temp;
     }
     Fraction div(int a){
         int x = numerator ;
         int y = denominator*a;
+        if( y == 0){
+            cout <<"Cannot divide by 0\n";
+            return *this;
+        }
         Fraction temp(x,y);
         return temp;
     }
@@ -104,29 +127,18 @@ public:
     }
     void print()
     {
-        if(denominator == 0){
-            cout <<"Cannot divide by 0\n";
-        }
-        else cout << numerator << "/" << denominator << "\n";
+        cout << numerator << "/" << denominator << "\n";
     }
 
     ~Fraction()
     {
-        // free allocated memories
-        //not necessary
+        // lagbena
     }
 };
-int gcd(int a, int b)
-{
-    if (b == 0)
-    {
-        return a;
-    }
-    else
-    {
-        return gcd(b, a % b);
-    }
-}
+
+
+
+
 class FractionCollection{
     private :
     Fraction *fractions;
@@ -296,7 +308,7 @@ a.div(2).print();
 cout << "Div(a, 0): ";
 a.div(0).print();
 
-// Collection of Fractions
+//Collection of Fractions
 Fraction e, f(5), g(10);
 FractionCollection fc(10);
 
@@ -311,14 +323,14 @@ fc.sub(0, 1).print(); // subtracts the fraction at pos1 from fraction at pos0
 cout << "Div(Pos0, Pos1): ";
 fc.div(0, 1).print(); // divides the fraction at pos0 by the fraction at pos1
 
-fc.remove(1); // removes fraction at position 1 ('b')
+fc.remove(1);
 fc.print();
 
-fc.remove(a); // removes fraction a
+fc.remove(a); 
 fc.print();
 
 fc.insert(d);
-fc.insert(0, e); // insert at position 0
+fc.insert(0, e); // insert at pos0
 fc.insert(f);
 fc.insert(g);
 fc.print();
