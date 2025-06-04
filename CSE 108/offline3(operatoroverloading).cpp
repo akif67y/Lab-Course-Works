@@ -33,70 +33,70 @@ class Fraction{
         denominator = b/temp;
         }
     }
-     Fraction operator+(Fraction &ob){
+     Fraction operator+(const Fraction &ob) const{
         int num = ob.numerator * denominator + numerator * ob.denominator;
         int den = ob.denominator *denominator;
         Fraction temp(num, den);
         return temp;
      }
-     Fraction operator-(Fraction &ob){
+     Fraction operator-(const Fraction &ob) const{
         int num = - ob.numerator * denominator + numerator * ob.denominator;
         int den = ob.denominator *denominator;
         Fraction temp(num, den);
         return temp;
      }
-     Fraction operator*(Fraction ob){
+     Fraction operator*(const Fraction &ob)const {
         int num = numerator * ob.numerator;
         int den = denominator * ob.denominator;
         Fraction temp(num, den);
         return temp;
      }
-     Fraction operator/(Fraction ob){
+     Fraction operator/(const Fraction &ob) const{
         int num = numerator * ob.denominator;
         int den = denominator * ob.numerator;
         Fraction temp(num, den);
         return temp;
      }
-       Fraction operator+(float x){
+       Fraction operator+(float x) const {
         Fraction ob(x,(float)1);
         return  *this + ob;
         
      }
-       Fraction operator-(float x){
+       Fraction operator-(float x) const{
         Fraction ob(x,(float)1);
         return *this - ob;
      }
-       Fraction operator*(float x){
+       Fraction operator*(float x) const{
         Fraction ob(x,(float)1);
         return (*this) * ob;
      }
-      Fraction operator/(float x){
+      Fraction operator/(float x) const{
         Fraction ob(x,(float)1);
         return (*this) / ob;
      }
 
-    Fraction& operator+=(Fraction &ob){
+    Fraction& operator+=(const Fraction &ob){
         Fraction temp;
         temp = (*this)+ob;
         numerator = temp.numerator;
         denominator = temp.denominator;
         return *this;
     }
-      Fraction& operator-=(Fraction &ob){
+      Fraction& operator-=(const Fraction &ob){
         Fraction temp;
         temp = (*this)-ob;
         numerator = temp.numerator;
         denominator = temp.denominator;
         return *this;
     }
-      Fraction& operator*=(Fraction &ob){
+      Fraction& operator*=(const Fraction &ob){
         Fraction temp;
         temp = (*this)*ob;
         numerator = temp.numerator;
         denominator = temp.denominator;
         return *this;
     }
-      Fraction& operator/=(Fraction &ob){
+      Fraction& operator/=(const Fraction &ob){
         Fraction temp;
         temp = (*this)/ob;
         numerator = temp.numerator;
@@ -123,7 +123,7 @@ class Fraction{
         return *this /= temp;
         
     }
-    Fraction sqrtin(){
+    Fraction sqrtin() const{
         float x = sqrt((float) numerator); 
         float y = sqrt((float) denominator);
         Fraction a(x,y);
@@ -131,36 +131,36 @@ class Fraction{
 
     }
     
-    friend Fraction operator+(float x, Fraction &ob);
-    friend Fraction operator*(float x, Fraction &ob);
-    friend Fraction operator-(float x, Fraction &ob);
-    friend Fraction operator/(float x, Fraction &ob);
+    friend Fraction operator+(float x,const Fraction &ob);
+    friend Fraction operator*(float x, const Fraction &ob);
+    friend Fraction operator-(float x, const Fraction &ob);
+    friend Fraction operator/(float x, const Fraction &ob);
     friend ostream& operator<<(ostream &out, const Fraction &op);
      friend istream& operator>>(istream &in, Fraction &op);
 
     
 };
-Fraction operator+(float x, Fraction &ob){
+Fraction operator+(float x, const Fraction &ob){
     return ob + x;
 }
-Fraction operator*(float x, Fraction &ob){
+Fraction operator*(float x, const Fraction &ob){
     return ob*x;
 }
-Fraction operator-(float x, Fraction &ob){
+Fraction operator-(float x, const Fraction &ob){
     Fraction temp(x,(float)1);
     return temp - ob;
 }
-Fraction operator/(float x, Fraction &ob){
+Fraction operator/(float x,const Fraction &ob){
     Fraction temp(x,(float)1);
     return temp/ob;
 }
 
 ostream& operator<<(ostream &out, const Fraction &op){
-    out <<"(" << op.numerator <<","<< op.denominator<<")";
+    out <<"(" << op.numerator <<"/"<< op.denominator<<")";
     return out;
 }
 istream& operator>>(istream &in, Fraction &op){
-    cout <<"Enter coordinate (x,y)";
+    cout <<"Fraction: (x/y) : ";
     in >> op.numerator >> op.denominator;
     return in;
 }
@@ -170,16 +170,19 @@ class FractionVector{
     Fraction *vectors;
     int size;
     public:
-    FractionVector(int n){
+    explicit FractionVector(int n){
         size = n;
         vectors = new Fraction[n];
+        if(vectors == NULL){ cout <<"Memory allocation failed;"; exit(1); }
     }
     FractionVector(){
         size = 0;
+        vectors = nullptr;
     }
     FractionVector(const FractionVector& ob){
         size = ob.size;
         vectors = new Fraction[size];
+        if(vectors == NULL){ cout <<"Memory allocation failed;"; exit(1); }
         for(int i = 0; i < size; i++){
             vectors[i] = ob.vectors[i];
         }
@@ -188,6 +191,7 @@ class FractionVector{
     Fraction& operator[](int pos) const{
         if(pos >= size){
             std::cout <<"out of order\n";
+            exit(1);
         }
         else{
             return vectors[pos]; 
@@ -196,15 +200,16 @@ class FractionVector{
         Fraction& operator[](int pos){
         if(pos >= size){
             std::cout <<"out of order\n";
+            exit(1);
         }
         else{
             return vectors[pos]; 
         }
     }
-    FractionVector operator+(FractionVector ob){ // eikhane adress dile
+    FractionVector operator+(const FractionVector &ob){ // eikhane adress dile
         if(size != ob.size){
             cout <<"addition not possible";
-            return *this;
+            exit(1);
         }
         else{
             FractionVector temp(size);
@@ -214,10 +219,10 @@ class FractionVector{
             return temp;
         }
     }
-      FractionVector operator-(FractionVector ob){
+      FractionVector operator-(const FractionVector &ob){
         if(size != ob.size){
             cout <<"subtraction not possible";
-            return *this;
+            exit(1);
         }
         else{
             FractionVector temp(size);
@@ -227,11 +232,10 @@ class FractionVector{
             return temp;
         }
     }
-    Fraction operator*(FractionVector ob){
+    Fraction operator*(const FractionVector &ob){
         if(ob.size != size){
             cout <<"Not possible\n";
-           Fraction temp;
-           return temp;
+            exit(1);
 
         }
         else{
@@ -244,7 +248,7 @@ class FractionVector{
             return ans;
         }
     }
-    FractionVector operator*(float frac){
+    FractionVector operator*(float frac) const{  
         FractionVector temp(size);
         for(int i = 0; i < size; i++){
             temp[i] = vectors[i] * frac;
@@ -258,7 +262,7 @@ class FractionVector{
         }
         return temp;
     }
-    friend FractionVector operator*(float frac, FractionVector ob);
+    friend FractionVector operator*(float frac, const FractionVector &ob);
 
     Fraction value(){
         Fraction ans;
@@ -276,14 +280,20 @@ class FractionVector{
         if(size >0) delete []vectors;
         size = ob.size;
         vectors = new Fraction[size];
+        if(vectors == NULL){ cout <<"Memory allocation failed;"; exit(1); }
         for(int i = 0; i < size; i++){
             vectors[i] = ob.vectors[i];
         }
         return *this;
-
+    }
+    void reallocatememory(int n){
+        if(size > 0){delete []vectors;}
+        size = n;
+        vectors = new Fraction[n];
+        if(vectors == NULL){ cout <<"Memory allocation failed;"; exit(1); }
     }
 
-    int getsize() {
+    int getsize() const{
         return size;
     }
       ~FractionVector(){
@@ -298,7 +308,7 @@ ostream& operator<<(ostream &out,const FractionVector &op){
     for(int i = 0; i < op.size; i++){
        out << op[i] ; 
         if(i < op.size -1){
-            cout <<", ";
+            out <<", ";
         }
         else{
             out <<" ";
@@ -309,9 +319,7 @@ ostream& operator<<(ostream &out,const FractionVector &op){
 
 }
 istream& operator>>(istream &in,  FractionVector &op){
-    cout <<"size" << op.size <<'\n';
-   
-    cout <<"Enter elements\n";
+    cout <<"Input: " << op.size <<" Numbers: "<<'\n';
     for(int i = 0; i < op.size; i++){
         in >> op.vectors[i];
     }
@@ -319,9 +327,8 @@ istream& operator>>(istream &in,  FractionVector &op){
 
 }
 
-
-FractionVector operator*(float frac, FractionVector ob){
-    return ob * frac;
+FractionVector operator*(float frac, const FractionVector &ob){
+    return ob*frac;
 }
 class FractionMatrix{
     private:
@@ -334,24 +341,36 @@ class FractionMatrix{
         rowcount = r;
         colcount = c;
         rows = new FractionVector[r];
+        if(rows == NULL){ cout <<"Memory allocation failed;"; exit(1); }
+        for(int i = 0; i < r; i++){
+            rows[i].reallocatememory(c);
+        }
         cols = new FractionVector[c];
-        // shobgulo fractionvector er size kintu 0
+        if(cols == NULL){ cout <<"Memory allocation failed;"; exit(1); }
+        for(int i = 0; i < c; i++){
+            cols[i].reallocatememory(r);
+        }
     }
     FractionMatrix(){
         rowcount = 0;
         colcount = 0;
+        rows = nullptr;
+        cols = nullptr;
     }
     FractionMatrix(const FractionMatrix& ob){
         rowcount = ob.rowcount;
         colcount = ob.colcount;
         rows = new FractionVector[rowcount];
+         if(rows == NULL){ cout <<"Memory allocation failed;"; exit(1); }
         cols = new FractionVector[colcount];
+         if(cols == NULL){ cout <<"Memory allocation failed;"; exit(1); }
         for(int i = 0; i < rowcount; i++){
             rows[i] = ob[i];
         }
         for(int i = 0; i < colcount; i++){
             cols[i] = ob.getColumn(i);
         }
+        
     }
     FractionMatrix& operator=(const FractionMatrix &ob){
         if(rowcount > 0){delete []rows;}
@@ -359,13 +378,16 @@ class FractionMatrix{
         rowcount = ob.rowcount;
         colcount = ob.colcount;
         rows = new FractionVector[rowcount];
+        if(rows == NULL){ cout <<"Memory allocation failed;"; exit(1); }
         cols = new FractionVector[colcount];
+         if(cols == NULL){ cout <<"Memory allocation failed;"; exit(1); }
         for(int i = 0; i < rowcount; i++){
             rows[i] = ob[i];
         }
         for(int i = 0; i < colcount; i++){
             cols[i] = ob.getColumn(i);
         }
+        return *this;
     }
     FractionVector& operator[](int pos)const {
         return rows[pos];
@@ -376,84 +398,114 @@ class FractionMatrix{
     FractionVector  getColumn(int indx) const{
         if(indx >= colcount){
             cout<<"Out of bounds\n";
-            return cols[0];
+             exit(1);
         }
         else return cols[indx];
     }
     void colfix(){
         for(int i = 0; i < colcount; i++){
-            FractionVector temp(rowcount);
+            
             for(int j = 0; j < rowcount; j++){
-                temp[j] = rows[j][i];
+                cols[i][j] = rows[j][i];
             }
-            cols[i] = temp;
         }
     }
-    FractionMatrix operator+(FractionMatrix &ob){
+    FractionMatrix operator+(const FractionMatrix &ob)const{
         //dimention check
+        if(rowcount != ob.rowcount || colcount != ob.colcount){
+            cout <<"Addition not possible\n";
+            exit(1);
+        }
         FractionMatrix temp(rowcount, colcount);
         for(int i = 0; i < rowcount; i++){
             temp[i] = rows[i] + ob[i];
         }
-        // er column type fixx kora lagbe
         temp.colfix();
         return temp;
     }
-      FractionMatrix operator-(FractionMatrix &ob){
+      FractionMatrix operator-(const FractionMatrix &ob) const{
         //dimention check
+        if(rowcount != ob.rowcount || colcount != ob.colcount){
+            cout <<"subtraction not possible\n";
+            exit(1);
+        }
         FractionMatrix temp(rowcount, colcount);
         for(int i = 0; i < rowcount; i++){
             temp[i] = rows[i] - ob[i];
         }
-        // er column type fixx kora lagbe
         temp.colfix();
         return temp;
     }
-      FractionMatrix operator%(FractionMatrix &ob){
-        //dimention check
+      FractionMatrix operator%(const FractionMatrix &ob) const{
+       
+        if(rowcount != ob.rowcount || colcount != ob.colcount){
+            cout <<"Hardon not possible\n";
+            exit(1);
+        }
         FractionMatrix temp(rowcount, colcount);
         for(int i = 0; i < rowcount; i++){
             FractionVector drim(colcount);
             for(int j = 0; j < colcount; j++){
-                drim[j] = rows[i][j] * ob[i][j];
+                temp[i][j] = rows[i][j] * ob[i][j];
             }
-            temp[i] = drim;
         }
-       
         temp.colfix();
         return temp;
     }
-     FractionMatrix operator*(FractionMatrix &ob){
-        //check for dimentional fault
+     FractionMatrix operator*(const FractionMatrix &ob) const{
+      
+        if(colcount != ob.rowcount){
+            cout <<"Multiplication not possible\n";
+            exit(1);
+        }
         FractionMatrix temp(rowcount, ob.colcount);
         for(int i = 0; i < rowcount; i++){
-            FractionVector ans(ob.colcount);
             for(int j = 0; j < ob.colcount; j++){
-                ans[j] = rows[i] * ob.getColumn(j);   
+                temp[i][j] = rows[i] * ob.getColumn(j);   
             }
-            temp[i] = ans;
+          
         }
         temp.colfix();
         return temp;
      }
      void transpose(){
-        int temp = rowcount;
+        int temp = rowcount; // temp is the rowcount prev
         rowcount = colcount;
+        colcount = temp;
+         // rowcount is the prev colcount;
         delete[] rows;
         rows = new FractionVector[rowcount];
+        if(rows == NULL){ cout <<"Memory allocation failed;"; exit(1); }
+        for(int i = 0; i < rowcount; i++){
+            rows[i].reallocatememory(colcount);
+        }
         for(int i = 0; i < rowcount; i++){
             rows[i] = getColumn(i);
         }
-        colcount = temp;
         delete []cols;
         cols = new FractionVector[colcount];
+        if(cols == NULL){ cout <<"Memory allocation failed;"; exit(1); }
+        for(int i = 0; i < colcount; i++){
+           cols[i].reallocatememory(rowcount);
+        }
         colfix();
      }
-    void takeinput(){
-        cout <<"Enter vectors\n";
-    
-    colfix();
-    }
+     FractionMatrix operator*(float x) const{
+        FractionMatrix temp(rowcount, colcount);
+        for(int i = 0; i < rowcount; i++){
+            temp[i] = rows[i] * x;
+        }
+        temp.colfix();
+        return temp;
+     }
+     FractionMatrix operator/(float x) const{
+        FractionMatrix temp(rowcount, colcount);
+        for(int i = 0; i < rowcount; i++){
+            temp[i] = rows[i] / x;
+        }
+        temp.colfix();
+        return temp;
+     }
     ~FractionMatrix(){
         delete []rows;
         delete []cols;
@@ -462,41 +514,106 @@ class FractionMatrix{
 
 friend ostream& operator<<(ostream& out, const FractionMatrix &m );
 friend istream& operator>>(istream&in, FractionMatrix &m);
+friend FractionMatrix operator*(float x, const FractionMatrix &m);
 };
 
 ostream& operator<<(ostream& out, const FractionMatrix &m ){
     for(int i = 0; i < m.rowcount; i++){
         out << m.rows[i];
-        cout <<"\n";
+        out <<"\n";
     }
     return out;
 }
 istream& operator>>(istream&in, FractionMatrix &m){
-    cout <<"Enter vectors: ";
+    cout <<"Enter vectors: \n";
      for(int i = 0; i < m.rowcount; i++){
-        FractionVector temp(m.colcount);
-        in >> temp;
-        m.rows[i] = temp;
+        cout <<"row " << i + 1 <<": \n";
+        in >> m.rows[i];
     }
     m.colfix();
     return in;
+}
+ FractionMatrix operator*(float x, const FractionMatrix &m) {
+        FractionMatrix temp(m.rowcount, m.colcount);
+        temp = m * x;
+        return temp;
+    }
 
+
+
+
+
+
+int main() {
+    cout << "Fraction & Fraction Operations ==\n";
+    Fraction f1, f2;
+    cout << "Enter two fractions (numerator denominator)\n> ";
+    cin >> f1 >> f2;
+
+    cout << "\nYou entered:\n"
+         << "  f1 = " << f1 << "\n"
+         << "  f2 = " << f2 << "\n";
+
+    cout << "Results:\n"
+         << "  f1 + f2 = " << (f1 + f2) << "\n"
+         << "  f1 - f2 = " << (f1 - f2) << "\n"
+         << "  f1 * f2 = " << (f1 * f2) << "\n"
+         << "  f1 / f2 = " << (f1 / f2) << "\n";
+    float x = 6.21f;
+    cout << "== Fraction ↔ Float Operations (x = " << x << ") ==\n"
+         << "  f1 = " << f1 << "\n"
+         << "  x  = " << x << "\n\n";
+
+    cout << "f1 op x:\n"
+         << "  f1 + x = " << (f1 + x) << "\n"
+         << "  f1 - x = " << (f1 - x) << "\n"
+         << "  f1 * x = " << (f1 * x) << "\n"
+         << "  f1 / x = " << (f1 / x) << "\n\n";
+
+    cout << "x op f2:\n"
+         << "  x + f2 = " << (x + f2) << "\n"
+         << "  x - f2 = " << (x - f2) << "\n"
+         << "  x * f2 = " << (x * f2) << "\n"
+         << "  x / f2 = " << (x / f2) << "\n\n";
+
+    // --- VECTOR OPERATIONS ---
+    cout << "== FractionVector Operations ==\n";
+    FractionVector v1(3), v2(3);
+    cout << "Enter 3 elements for vector v1:\n> ";
+    cin >> v1;
+    cout << "Enter 3 elements for vector v2:\n> ";
+    cin >> v2;
+
+    cout << "\nv1 = " << v1 << "\n"
+         << "v2 = " << v2 << "\n\n";
+
+    cout << "v1 + v2        = " << (v1 + v2) << "\n"
+         << "v1 * scalar(x) = " << (v1 * x) << "\n"
+         << "scalar(x) * v1 = " << (x * v1) << "\n"
+         << "Dot(v1, v2)    = " << (v1 * v2) << "\n"
+         << "|v1|           = " << v1.value() << "\n\n";
+
+    // --- MATRIX OPERATIONS ---
+    cout << "== FractionMatrix Operations ==\n";
+    // dimensions chosen to allow addition, multiplication, Hadamard
+    FractionMatrix m1(2, 2), m2(2, 2);
+    cout << "Enter a 2×2 matrix m1 (row by row):\n";
+    cin >> m1;
+    cout << "Enter a 2×2 matrix m2 (row by row):\n";
+    cin >> m2;
+
+    cout << "\nm1:\n" << m1
+         << "m2:\n" << m2 << "\n";
+
+    cout << "m1 + m2       =\n" << (m1 + m2) << "\n"
+         << "m1 * m2 (mul) =\n" << (m1 * m2) << "\n"
+         << "m1 % m2 (Hadamard) =\n" << (m1 % m2) << "\n"
+         << "x * m1 (scalar)    =\n" << (x * m1) << "\n"
+         << "m1 * x (scalar)    =\n" << (m1 * x) << "\n";
+
+    return 0;
 }
 
 
 
-int main(){
- 
-    FractionMatrix m(2,3);
-    cin >> m;
-    cout << m;
-    // FractionMatrix m2(2,2);
-    // cin >> m2;
-    // cout << m2;
-    // FractionMatrix m3;
-    // m3 = m *m2;
-    // cout << m3;
-   m.transpose();
-   cout << m;
 
-}
