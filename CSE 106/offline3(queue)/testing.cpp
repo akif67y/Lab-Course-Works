@@ -3,8 +3,8 @@
 using namespace std;
 
 int main(){
-    Queue *q = new ArrayQueue();
-    for(int i = 0; i < 100; i++){
+    Queue *q = new ListQueue();
+    for(int i = 0; i < 15; i++){
         try{
             q->enqueue(i);
         }
@@ -12,8 +12,8 @@ int main(){
             cout << s <<"\n";
         }
     }
-    q->toString();
-    for(int i = 0; i < 101; i++){
+    cout <<q->toString() <<'\n';
+    for(int i = 0; i < 16; i++){
           try{
             int t = q->dequeue();
             cout<<"dequeud: "<< t <<"\n";
@@ -23,6 +23,6 @@ int main(){
         }
     }
  
-    q->toString();
+ cout <<q->toString() <<'\n';
     
 }
