@@ -48,8 +48,6 @@ int ArrayQueue::dequeue()
         int t = data[front_idx];
         front_idx = -1;
         rear_idx = -1;
-        delete[]data;
-        data = new int[2];
         return t;
     }
     else{
@@ -79,6 +77,7 @@ void ArrayQueue::clear()
 // Size implementation
 int ArrayQueue::size() const
 {
+    if(empty()){return 0;}
     // TODO: Return the number of elements currently in the queue
     int full = 0;
     int i;
@@ -126,9 +125,14 @@ bool ArrayQueue::empty() const
 // Print implementation
 string ArrayQueue::toString() const
 {
+
     // TODO: Convert queue to a string representation in the format: <elem1, elem2, ..., elemN|
     string s;
     s.push_back('<');
+    if(empty()){
+        s += '|';
+        return s;
+    }
     int i;
     for( i = front_idx; i != rear_idx; i = (i + 1) % capacity){
         s += to_string(data[i]);
@@ -145,51 +149,27 @@ string ArrayQueue::toString() const
 void ArrayQueue::resize(int new_capacity)
 {    
     // TODO: Create a new array with the new capacity
-    int *temp = new int[new_capacity];
-    if(new_capacity > capacity){
- 
-        if(front_idx <= rear_idx){
-            for(int i = front_idx; i <= rear_idx; i++){
-                temp[i]= data[i];
-            }
-            delete[]data;
-            data = temp;
-            capacity = capacity * 2;
-        }
-        else{
-            for(int i = front_idx; i < capacity; i++){
-                temp[i] = data[i];
-            }
-            for(int i = 0; i <= rear_idx; i++){
-                temp[capacity + i]= data[i];
-            }
-            delete[]data;
-            data = temp;
-            rear_idx = capacity + rear_idx;
-            capacity = new_capacity;
-        }
-    }
-    else{
-            int full = size();
-            int newidx = 0;
-            int i;
-            for( i = front_idx; i != rear_idx; i = (i + 1) % capacity){
-                temp[newidx++] = data[i];
-            }
-            if( i == rear_idx){
-                temp[newidx++] = data[i];
-            }
-            capacity = new_capacity;
-            front_idx = 0;
-            rear_idx = full - 1;
-            delete[] data;
-            data = temp;
-        
-    }
     // TODO: Copy elements from the old array to the new array
     // TODO: Delete the old array
     // TODO: Update the data pointer and capacity
     // TODO: Update front and rear indices
+    if(new_capacity < 2){return;}
+    int *temp = new int[new_capacity];
+    int newidx = 0;
+    int full = size();
+    int i;
+    for( i = front_idx; i != rear_idx; i = (i + 1) % capacity){
+        temp[newidx++] = data[i];
+    }
+    if(i == rear_idx ){
+        temp[newidx++] = data[i];
+    }
+    delete []data;
+    data = temp;
+    capacity = new_capacity;
+    front_idx = 0;
+    rear_idx = full-1;
+
 }
 
 int ArrayQueue::getCapacity() const
