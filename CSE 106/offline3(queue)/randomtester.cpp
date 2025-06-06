@@ -23,8 +23,9 @@ int main(int argc, char *argv[])
             N = 10;
         }
     }
+
     srand((unsigned)time(0));
-    Queue *my_queue = new ArrayQueue(); // Change to ListQueue() if needed
+    Queue *my_queue = new ArrayQueue(2); // Change to ListQueue() if needed
     queue<int> stl_queue;
 
     {
