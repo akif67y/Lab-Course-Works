@@ -48,6 +48,9 @@ int ArrayQueue::dequeue()
         int t = data[front_idx];
         front_idx = -1;
         rear_idx = -1;
+        delete []data;
+        data = new int[2];
+        capacity = 2;
         return t;
     }
     else{
